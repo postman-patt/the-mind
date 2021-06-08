@@ -11,7 +11,7 @@ function App() {
           <header className='App-header'>
             <h1>The Mind Card Game</h1>
             <Route path='/' exact component={Home} />
-            <Route path='/play' exact component={GameStage} />
+            <Route path='/play/:roomCode' exact component={GameStage} />
           </header>
         </div>
       </Router>
