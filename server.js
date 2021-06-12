@@ -2,7 +2,7 @@ const express = require('express')
 const http = require('http')
 const app = express()
 const server = http.createServer(app)
-const { userJoin, getRoomUsers } = require('./utils/users.js')
+const { userJoin, getRoomUsers, userLeave } = require('./utils/users.js')
 
 //Setting CORS access list
 const socketio = require('socket.io')
@@ -39,6 +39,14 @@ io.on('connection', (socket) => {
     socket.on('updateGameState', (gameState) => {
       socket.to(user.room).emit('updateGameState', gameState)
     })
+  })
+  //On disconnect
+  socket.on('disconnect', () => {
+    const user = userLeave(socket.id)
+    if (user)
+      io.to(user.room).emit('playerLeft', {
+        playerThatLeftId: user.id,
+      })
   })
 })
 

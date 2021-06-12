@@ -50,6 +50,11 @@ export const GameStage = ({ match }) => {
         playerStates && setPlayerStates(playerStates)
       }
     )
+    //if player leaves games, remove his cards from the stack
+    socket.on('playerLeft', ({ playerThatLeftId }) => {
+      console.log(playerThatLeftId)
+    })
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -166,6 +171,29 @@ export const GameStage = ({ match }) => {
         playerStates: players,
       })
     }
+  }
+
+  //If player leaves
+  const playerLeft = (id) => {
+    const playerThatLeft = playerStates.filter((player) => player.id === id)
+    console.log(playerStates)
+
+    const newPlayerStates = playerStates.filter(
+      (player) => player.id !== playerThatLeft.id
+    )
+    const newCardsPlayed = cardsPlayed.filter((cardPlayed) =>
+      playerThatLeft.cards.every(
+        (playerThatLeftCard) => cardPlayed !== playerThatLeftCard
+      )
+    )
+    const newAllCards = allCards.filter((card) =>
+      playerThatLeft.cards.every(
+        (playerThatLeftCard) => card !== playerThatLeftCard
+      )
+    )
+    console.log(newCardsPlayed)
+    console.log(newAllCards)
+    console.log(newPlayerStates)
   }
   return (
     <>
