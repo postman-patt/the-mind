@@ -2,11 +2,20 @@ const express = require('express')
 const http = require('http')
 const app = express()
 const server = http.createServer(app)
-const { userJoin, getRoomUsers, userLeave } = require('./utils/users.js')
+const { userJoin, getSessionIDUsers, userLeave } = require('./utils/users.js')
+const {
+  checkSession,
+  initGameState,
+  deal,
+  joinSession,
+  playCard,
+  checkGameOver,
+  checkGameWon,
+  playerLeft,
+} = require('./utils/gameLogic.js')
 
 //Setting CORS access list
 const socketio = require('socket.io')
-const { emit } = require('process')
 const io = socketio(server, {
   cors: {
     origin: 'http://localhost:3000',
@@ -18,35 +27,66 @@ const PORT = 5000 || process.env.PORT
 //Socket
 io.on('connection', (socket) => {
   //Join room
-  socket.on('joinRoom', ({ username, room }) => {
-    const user = userJoin(socket.id, username, room)
+  socket.on('joinRoom', ({ username, sessionID }) => {
+    const user = userJoin(socket.id, username, sessionID)
 
-    //Show user in console
-    console.log(
-      `${username} with id of ${socket.id} has joined the room ${room}`
-    )
+    //Join the room/session
+    socket.join(sessionID)
 
-    //Join the room
-    socket.join(room)
+    const checkSessionID = checkSession(sessionID)
 
-    //Sent the initial game state to the users
-    io.to(user.room).emit('initGameState', {
-      room: user.room,
-      players: getRoomUsers(user.room),
-      player: socket.id,
+    if (checkSessionID) {
+      //Init game state
+      const gameState = initGameState(sessionID, getSessionIDUsers(sessionID))
+      //Sent the initial game state to the users
+      io.to(user.sessionID).emit('initGameState', {
+        gameState,
+        player: socket.id,
+      })
+    } else {
+      //Retrieve current game state
+      const currentGameState = joinSession(sessionID, user)
+
+      io.to(user.sessionID).emit('updateGameState', currentGameState)
+    }
+
+    //Deal cards
+    socket.on('dealCards', (sessionID) => {
+      io.to(user.sessionID).emit('updateGameState', deal(sessionID))
     })
 
+    //Play card
+    socket.on('playCard', ({ sessionID, value, player }) => {
+      io.to(user.sessionID).emit(
+        'updateGameState',
+        playCard(sessionID, value, player)
+      )
+    })
+
+    //Check game over
+    socket.on('checkGameOver', (sessionID) => {
+      io.to(user.sessionID).emit('updateGameState', checkGameOver(sessionID))
+    })
+
+    //Check game won
+    socket.on('checkGameWon', (sessionID) => {
+      io.to(user.sessionID).emit('updateGameState', checkGameWon(sessionID))
+    })
+
+    //update game state
     socket.on('updateGameState', (gameState) => {
-      socket.to(user.room).emit('updateGameState', gameState)
+      socket.to(user.sessionID).emit('updateGameState', gameState)
     })
   })
+
   //On disconnect
   socket.on('disconnect', () => {
     const user = userLeave(socket.id)
     if (user)
-      io.to(user.room).emit('playerLeft', {
-        playerThatLeftId: user.id,
-      })
+      io.to(user.sessionID).emit(
+        'updateGameState',
+        playerLeft(user.sessionID, user.id)
+      )
   })
 })
 

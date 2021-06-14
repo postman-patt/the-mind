@@ -1,7 +1,7 @@
 const users = []
 
-function userJoin(id, name, room, inGame) {
-  const user = { id, name, room, cards: [], inGame }
+function userJoin(id, name, sessionID) {
+  const user = { id, name, sessionID, cards: [] }
   users.push(user)
   return user
 }
@@ -11,7 +11,7 @@ function getCurrentUser(id) {
   return users.find((user) => user.id === id)
 }
 
-//User leaves room
+//User leaves sessionID
 function userLeave(id) {
   const index = users.findIndex((user) => user.id === id)
 
@@ -20,9 +20,9 @@ function userLeave(id) {
   }
 }
 
-//Get players in the room
-function getRoomUsers(room) {
-  return users.filter((user) => user.room === room)
+//Get players in the sessionID
+function getSessionIDUsers(sessionID) {
+  return users.filter((user) => user.sessionID === sessionID)
 }
 
-module.exports = { userLeave, getRoomUsers, userJoin, getCurrentUser }
+module.exports = { userLeave, getSessionIDUsers, userJoin, getCurrentUser }
