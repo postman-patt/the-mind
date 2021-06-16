@@ -26,6 +26,17 @@ const PORT = 5000 || process.env.PORT
 
 //Socket
 io.on('connection', (socket) => {
+  socket.on('checkIfSessionExists', (sessionID) => {
+    const checkSessionID = checkSession(sessionID)
+    if (checkSessionID) {
+      //If game doesnt exists
+      socket.emit('serverReply', false)
+    } else {
+      //If game does exists
+      socket.emit('serverReply', true)
+    }
+  })
+
   //Join room
   socket.on('joinRoom', ({ username, sessionID }) => {
     const user = userJoin(socket.id, username, sessionID)
@@ -36,6 +47,7 @@ io.on('connection', (socket) => {
     const checkSessionID = checkSession(sessionID)
 
     if (checkSessionID) {
+      //If game doesnt exists
       //Init game state
       const gameState = initGameState(sessionID, getSessionIDUsers(sessionID))
       //Sent the initial game state to the users
@@ -44,8 +56,11 @@ io.on('connection', (socket) => {
         player: socket.id,
       })
     } else {
+      //If game exists
       //Retrieve current game state
       const currentGameState = joinSession(sessionID, user)
+
+      io.to(user.id).emit('setPlayerId', user.id)
 
       io.to(user.sessionID).emit('updateGameState', currentGameState)
     }

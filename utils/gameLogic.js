@@ -174,7 +174,7 @@ const checkGameWon = (sessionID) => {
   )[0]
 
   if (
-    session.cardsPlayed.length > 1 &&
+    session.cardsPlayed.length >= 1 &&
     session.cardsPlayed.length === session.allCards.length
   ) {
     //remove all cards from all players
@@ -236,7 +236,10 @@ const playerLeft = (sessionID, playerLeftId) => {
 
   // Check whether there are no more cards to be played due to player leaving
   const checkIfFinished = () => {
-    if (newAllCards.length === newCardsPlayed.length) {
+    if (
+      newAllCards.length === newCardsPlayed.length ||
+      session.gameOver === true
+    ) {
       return false
     } else {
       return true
