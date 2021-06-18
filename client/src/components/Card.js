@@ -6,7 +6,7 @@ export const Card = ({ value, playCard, player }) => {
       <a className='card' onClick={() => playCard(value, player)}>
         {' '}
         <img
-          src={`../assets/cardset/${value}.png`}
+          src={`../../assets/cardset/${value}.png`}
           alt='the-mind-title'
           width='100%'
         />

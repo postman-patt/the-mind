@@ -15,11 +15,14 @@ const Header = () => {
           </Col>
         </Row>
         <Row className='justify-content-md-center'>
-          <Col lg={5}>
+          <Col
+            lg={5}
+            className='homepage-image d-flex justify-content-center mb-3'
+          >
             <img
               src={'../assets/the-mind-cover2.png'}
               alt='the-mind-logo'
-              width='100%'
+              width='80%'
             />
           </Col>
         </Row>

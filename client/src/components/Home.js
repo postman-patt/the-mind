@@ -7,6 +7,7 @@ import { Row, Col, Button, Form, Container } from 'react-bootstrap'
 
 export const Home = ({ history }) => {
   const [sessionID, setSessionID] = useState('')
+  const [name, setName] = useState('')
   const [message, setMessage] = useState('')
 
   //Generate room code
@@ -22,7 +23,19 @@ export const Home = ({ history }) => {
   }
 
   const handleJoinSession = (room) => {
-    socket.emit('checkIfSessionExists', sessionID)
+    if (name !== '') {
+      socket.emit('checkIfSessionExists', sessionID)
+    } else {
+      setMessage('Please insert name')
+    }
+  }
+
+  const handleCreateRoom = () => {
+    if (name !== '') {
+      history.push(`/play/${name}/${randomCodeGenerator(4)}`)
+    } else {
+      setMessage('Please insert name')
+    }
   }
 
   useEffect(() => {
@@ -31,9 +44,9 @@ export const Home = ({ history }) => {
       console.log(payload)
       if (payload) {
         console.log(sessionID)
-        history.push(`/play/${sessionID}`)
+        history.push(`/play/${name}/${sessionID}`)
       } else {
-        setMessage('room does not exists')
+        setMessage('Room does not exists...')
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,11 +59,24 @@ export const Home = ({ history }) => {
           <Header />
         </Row>
         {message && (
-          <Row md={6}>
-            <p>{message}</p>{' '}
+          <Row md={6} className='justify-content-md-center'>
+            <Col className='d-flex justify-content-center'>
+              <p>{message}</p>{' '}
+            </Col>
           </Row>
         )}
-        <Row className='justify-content-md-center mb-5'>
+        <Row className='justify-content-md-center mb-3'>
+          <Col md={4}>
+            <Form.Control
+              id='sessionCode'
+              placeholder='Name'
+              label='Name'
+              type='text'
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Col>
+        </Row>
+        <Row className='justify-content-md-center mb-3'>
           <Col md={4}>
             <Form.Control
               id='sessionCode'
@@ -62,10 +88,10 @@ export const Home = ({ history }) => {
           </Col>
         </Row>
         <Row className='justify-content-md-center'>
-          <Col xs={6} md={3} className='d-flex justify-content-center'>
+          <Col xs={6} md={2} className='d-flex justify-content-center'>
             <Button
               size='lg'
-              className='p-4'
+              className='homepage-button p-4'
               variant='light'
               onClick={() => {
                 handleJoinSession(sessionID)
@@ -74,12 +100,12 @@ export const Home = ({ history }) => {
               Join Room
             </Button>
           </Col>
-          <Col xs={6} md={3} className='d-flex justify-content-center'>
+          <Col xs={6} md={2} className='d-flex justify-content-center'>
             <Button
-              className='p-4'
+              className='homepage-button p-2'
               size='lg'
               variant='light'
-              onClick={() => history.push(`/play/${randomCodeGenerator(4)}`)}
+              onClick={() => handleCreateRoom()}
             >
               Create a room
             </Button>

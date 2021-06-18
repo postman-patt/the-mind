@@ -7,13 +7,33 @@ body {
   color: white;
 }
 
+/* Homepage */
 .title-header {
   display: flex;
   justify-content: center;
 }
 
-.App-link {
-  color: #61dafb;
+.homepage-button {
+  font-size: 28px;
+  transition: transform 0.2s;
+}
+
+.homepage-button:hover {
+  transform: scale(1.1);
+}
+
+.homepage-image img {
+  -webkit-filter: drop-shadow(0px 0px 15px #ffffff);
+  filter: drop-shadow(0px 0px 15px #ffffff);
+}
+
+/* Game Stage */
+.top-bar {
+  background-color: #0c0c0c;
+}
+
+.gameStage p {
+  font-size: 40px;
 }
 
 #sessionCode {
@@ -43,12 +63,81 @@ body {
   font-size: 50px;
 }
 
+@media only screen and (min-width: 768px) {
+  .hand {
+    z-index: 99;
+    position: fixed !important;
+    right: 0px;
+    bottom: 0px !important;
+  }
+}
+
 .card {
   border: none;
+  width: 80%;
   border-radius: 45px;
-  box-shadow: 0px 0px 10px -2px #cfcfcf;
+  box-shadow: 0px 0px 15px -2px #cfcfcf;
+  transition: transform 0.3s;
 }
 
 .card:hover {
   box-shadow: 0px 0px 20px -2px #cfcfcf;
+  transform: scale(1.1);
+  filter: brightness(1.5);
+}
+
+.playedCard {
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px -2px #cfcfcf;
+}
+
+.playedCard:last-child {
+  transform: scale(1.5);
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px -2px #cfcfcf;
+}
+
+.game-finished p {
+  font-size: 120px !important;
+  text-align: center;
+  letter-spacing: 5px;
+  animation: fadein 4s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.level {
+  color: #cfcfcf;
+  border: 3px solid #cfcfcf;
+  opacity: 0.3;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.active {
+  opacity: 1;
+}
+
+.players-names p {
+  font-size: 35px !important;
+}
+
+.other-player-cards {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px -3px #cfcfcf;
+  transition: transform 0.3s;
 }
