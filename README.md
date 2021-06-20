@@ -1,5 +1,3 @@
-# the-mind
-
 <h1> The Mind Card Game </h1>
 
 <p>The Mind Card Game using React, Express and Socketio</p>
