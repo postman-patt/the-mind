@@ -6,7 +6,7 @@ const playedCard = ({ value }) => {
       className='playedCard'
       src={`../../assets/cardset/${value}.png`}
       alt='the-mind-title'
-      width='20%'
+      width='30%'
     />
   )
 }

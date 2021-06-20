@@ -12,11 +12,11 @@ import { Row, Col, Button, Container } from 'react-bootstrap'
 export const GameStage = ({ match }) => {
   //Initiate game state
   const [playerId, setPlayerId] = useState('')
-  const [username, setUsername] = useState('')
   const [sessionID, setSessionID] = useState('')
   const [gameStart, setGameStart] = useState(false)
   const [gameOver, setGameOver] = useState(false)
   const [cardsPlayed, setCardsPlayed] = useState([])
+  // eslint-disable-next-line no-unused-vars
   const [allCards, setAllCards] = useState([])
   const [level, setLevel] = useState(1)
   const [levelComplete, setLevelComplete] = useState(false)
@@ -103,7 +103,7 @@ export const GameStage = ({ match }) => {
           </Col>
           <LevelBar level={level} />
         </Row>
-        <Row>
+        <Row className='pt-5'>
           <Col md={4} className='d-flex justify-content-center py-4'>
             <Container>
               <Row>
@@ -134,7 +134,6 @@ export const GameStage = ({ match }) => {
               ))}
             </Container>
           </Col>
-
           <Col md={8}>
             {!gameOver ? (
               !levelComplete ? (
@@ -145,7 +144,7 @@ export const GameStage = ({ match }) => {
                     </Col>
                   </Row>
                   <Row className='justify-content-md-center py-3'>
-                    <Col md={4} className='d-flex justify-content-center'>
+                    <Col md={4} className='d-flex justify-content-center py-5'>
                       {cardsPlayed.map((card, index) => (
                         <PlayedCard value={card} key={index} />
                       ))}
