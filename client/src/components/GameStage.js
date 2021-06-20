@@ -3,16 +3,20 @@ import { useState, useEffect } from 'react'
 import Card from './Card'
 import Hand from './Hand'
 import PlayedCard from './PlayedCard'
+import LevelBar from './LevelBar'
 import { socket } from '../connection/socket'
+
+//Bootstrap Imports
+import { Row, Col, Button, Container } from 'react-bootstrap'
 
 export const GameStage = ({ match }) => {
   //Initiate game state
   const [playerId, setPlayerId] = useState('')
-  const [username, setUsername] = useState('')
-  const [room, setRoom] = useState('')
+  const [sessionID, setSessionID] = useState('')
   const [gameStart, setGameStart] = useState(false)
   const [gameOver, setGameOver] = useState(false)
   const [cardsPlayed, setCardsPlayed] = useState([])
+  // eslint-disable-next-line no-unused-vars
   const [allCards, setAllCards] = useState([])
   const [level, setLevel] = useState(1)
   const [levelComplete, setLevelComplete] = useState(false)
@@ -21,18 +25,28 @@ export const GameStage = ({ match }) => {
   //Run check on gameOver state on any state change
   useEffect(() => {
     //Join room and send your information to other players
-    socket.emit('joinRoom', { username, room: match.params.roomCode })
+    socket.emit('joinRoom', {
+      username: match.params.name,
+      sessionID: match.params.roomCode,
+    })
 
-    //Recieve information for players in the room
-    socket.on('initGameState', (payload) => {
-      setPlayerStates(payload.players)
-      setPlayerId(payload.player)
-      setRoom(payload.room)
+    //Retrieve your own id
+
+    socket.on('setPlayerId', (playerId) => {
+      setPlayerId(playerId)
+    })
+
+    //Recieve information for initial state and players in the room
+    socket.on('initGameState', ({ gameState, player }) => {
+      setPlayerStates(gameState.playerStates)
+      setPlayerId(player)
+      setSessionID(gameState.sessionID)
     })
 
     socket.on(
       'updateGameState',
       ({
+        sessionID,
         gameStart,
         gameOver,
         cardsPlayed,
@@ -40,14 +54,17 @@ export const GameStage = ({ match }) => {
         level,
         levelComplete,
         playerStates,
+        player,
       }) => {
+        setSessionID(sessionID)
         setGameStart(gameStart)
         setGameOver(gameOver)
-        cardsPlayed && setCardsPlayed(cardsPlayed)
-        allCards && setAllCards(allCards)
-        level && setLevel(level)
+        setCardsPlayed(cardsPlayed)
+        setAllCards(allCards)
+        setLevel(level)
         setLevelComplete(levelComplete)
-        playerStates && setPlayerStates(playerStates)
+        setPlayerStates(playerStates)
+        player && setPlayerId(player)
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,159 +72,147 @@ export const GameStage = ({ match }) => {
 
   //GAME LOGIC FUNCTIONS
 
-  useEffect(() => {
-    //Check for game over - Should also emit updatedState to all users if true
-    checkGameOver()
-    //Check for game won
-    checkGameWon()
-  }, [cardsPlayed, allCards])
-
-  //Generator cards to be dealt
-  const numberGenerator = () => {
-    return Math.floor(Math.random() * 100 + 1)
-  }
-
   //Deal cards to player
   const deal = () => {
-    //Set back to initial state
-    setPlayerStates([])
-    setAllCards([])
-    setCardsPlayed([])
-    setGameOver(false)
-    setLevelComplete(false)
-    setGameStart(true)
-
-    const players = playerStates
-    const allCardsDealt = []
-    for (let i = 0; i < level; i++) {
-      for (let j = 0; j < players.length; j++) {
-        const dealCard = () => {
-          let value = numberGenerator()
-          let checkCard = allCardsDealt.every((card) => card !== value)
-          if (checkCard) {
-            players[j].cards.push(value)
-            allCardsDealt.push(value)
-          } else {
-            dealCard()
-            return
-          }
-        }
-        dealCard()
-      }
-    }
-    setPlayerStates(players)
-    setAllCards(allCardsDealt)
-    socket.emit('updateGameState', {
-      levelComplete: false,
-      gameStart: true,
-      gameOver: false,
-      playerStates: players,
-      cardsPlayed: [],
-      allCards: allCardsDealt,
-    })
+    socket.emit('dealCards', sessionID)
   }
 
-  //Play cards
+  //Play cards and check if game over OR game won
   const playCard = (value, player) => {
-    const playerWithCard = playerStates.filter((item) => item.id === player)[0]
-    const updatedPlayerStates = {
-      id: playerWithCard.id,
-      cards: playerWithCard.cards.filter((card) => card !== value),
-    }
-    setCardsPlayed([...cardsPlayed, value])
-    setPlayerStates(
-      playerStates.map((item) =>
-        item.id === updatedPlayerStates.id ? updatedPlayerStates : item
-      )
-    )
-
-    const updatedCardsPlayed = [...cardsPlayed, value]
-    const newPlayerStates = playerStates.map((item) =>
-      item.id === updatedPlayerStates.id ? updatedPlayerStates : item
-    )
-    socket.emit('updateGameState', {
-      cardsPlayed: updatedCardsPlayed,
-      playerStates: newPlayerStates,
-    })
+    socket.emit('playCard', { sessionID, value, player })
+    checkGameWon(sessionID)
+    checkGameOver(sessionID)
   }
 
-  //Check whether game has ended
+  //Check if game has ended
   const checkGameOver = () => {
-    const sortedAllCards = allCards
-      .sort((a, b) => a - b)
-      .slice(0, cardsPlayed.length)
-    if (sortedAllCards.toString() !== cardsPlayed.toString()) {
-      //remove all cards from all players
-      const players = playerStates.map((player) => ({ ...player, cards: [] }))
-      console.log(sortedAllCards.toString())
-      console.log(cardsPlayed.toString())
-      socket.emit('updateGameState', {
-        gameOver: true,
-        gameStart: false,
-        playerStates: players,
-      })
-      setGameStart(false)
-      setGameOver(true)
-    }
+    socket.emit('checkGameOver', sessionID)
   }
 
-  //Check whether game has been won
+  //Check if game has been won
   const checkGameWon = () => {
-    if (cardsPlayed.length > 1 && cardsPlayed.length === allCards.length) {
-      //remove all cards from all players
-      const players = playerStates.map((player) => ({ ...player, cards: [] }))
-      setLevel(level + 1)
-      setLevelComplete(true)
-      setGameStart(false)
-      socket.emit('updateGameState', {
-        level: level + 1,
-        levelComplete: true,
-        gameStart: false,
-        playerStates: players,
-      })
-    }
+    socket.emit('checkGameWon', sessionID)
   }
+
   return (
     <>
-      <h2>{`Room: ${room}`}</h2>
-      {!gameStart && (
-        <button
-          onClick={() => {
-            deal()
-          }}
-        >
-          Deal
-        </button>
-      )}
-      {!gameOver ? (
-        !levelComplete ? (
-          <div className='gameStage'>
-            {cardsPlayed.map((card, index) => (
-              <PlayedCard value={card} key={index} />
-            ))}
-          </div>
-        ) : (
-          <h1>LEVEL COMPLETE</h1>
-        )
-      ) : (
-        <h1>GAME OVER</h1>
-      )}
+      <Container fluid className='gameStage'>
+        <Row className='justify-content-md-center pt-3 pb-1 mb-3 top-bar'>
+          <Col md={4} className='d-flex justify-content-center'>
+            <p>{`Room: ${sessionID}`}</p>
+          </Col>
+          <LevelBar level={level} />
+        </Row>
+        <Row className='pt-5'>
+          <Col md={4} className='d-flex justify-content-center py-4'>
+            <Container>
+              <Row>
+                <Col>
+                  <h1>Players</h1>
+                </Col>
+              </Row>
 
-      <div>
-        {playerStates.map((player, index) => (
-          <Hand key={index}>
-            <p>{`Player: ${player.id}`}</p>
-            {player.cards.map((card, index) => (
-              <Card
-                value={card}
-                player={player.id}
-                key={index}
-                playCard={playCard}
-              />
-            ))}
-          </Hand>
-        ))}
-      </div>
+              {playerStates.map((player) => (
+                <Row>
+                  <Col
+                    md={3}
+                    className='players-names d-flex justify-content-center'
+                  >
+                    <p>{player.name}</p>
+                  </Col>
+                  <Col md={9}>
+                    {player.cards.map((card) => (
+                      <img
+                        className='other-player-cards mx-1'
+                        src={`../../assets/cardset/0.png`}
+                        alt='back-of-card'
+                        width='10%'
+                      />
+                    ))}{' '}
+                  </Col>
+                </Row>
+              ))}
+            </Container>
+          </Col>
+          <Col md={8}>
+            {!gameOver ? (
+              !levelComplete ? (
+                <>
+                  <Row className='justify-content-md-center py-3'>
+                    <Col md={4} className='d-flex justify-content-center'>
+                      <h1>Cards Played</h1>
+                    </Col>
+                  </Row>
+                  <Row className='justify-content-md-center py-3'>
+                    <Col md={4} className='d-flex justify-content-center py-5'>
+                      {cardsPlayed.map((card, index) => (
+                        <PlayedCard value={card} key={index} />
+                      ))}
+                    </Col>
+                  </Row>
+                </>
+              ) : (
+                <Row className='justify-content-md-center py-3 game-finished'>
+                  <Col md={4} className='d-flex justify-content-center'>
+                    <p>LEVEL COMPLETE</p>
+                  </Col>
+                </Row>
+              )
+            ) : (
+              <Row className='justify-content-md-center py-3 game-finished'>
+                <Col md={4} className='d-flex justify-content-center'>
+                  <p>GAME OVER</p>
+                </Col>
+              </Row>
+            )}
+            {!gameStart && (
+              <Row className='justify-content-md-center mt-5'>
+                <Col md={6} className='d-flex justify-content-center p-5'>
+                  <Button
+                    className='deal-button px-5'
+                    variant='light'
+                    size='lg'
+                    onClick={() => {
+                      deal()
+                    }}
+                  >
+                    Deal
+                  </Button>
+                </Col>
+              </Row>
+            )}
+          </Col>
+        </Row>
+        <Row className='hand'>
+          {playerStates.map(
+            (player, index) =>
+              playerId === player.id && (
+                <Hand key={index}>
+                  <Row xs={12} className='justify-content-md-center'>
+                    <Col md={6} className='d-flex justify-content-center'>
+                      <p>Your hand</p>
+                    </Col>
+                  </Row>
+                  <Row xs={12} className='justify-content-md-center'>
+                    {player.cards.map((card, index) => (
+                      <Col
+                        md={2}
+                        className='d-flex justify-content-center py-3'
+                      >
+                        <Card
+                          value={card}
+                          player={player.id}
+                          key={index}
+                          playCard={playCard}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+                </Hand>
+              )
+          )}
+        </Row>
+      </Container>
     </>
   )
 }

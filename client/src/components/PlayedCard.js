@@ -2,9 +2,12 @@ import React from 'react'
 
 const playedCard = ({ value }) => {
   return (
-    <div>
-      <h1>{value}</h1>
-    </div>
+    <img
+      className='playedCard'
+      src={`../../assets/cardset/${value}.png`}
+      alt='the-mind-title'
+      width='30%'
+    />
   )
 }
 

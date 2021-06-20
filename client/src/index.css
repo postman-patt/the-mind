@@ -1,13 +1,143 @@
+/* Global */
+
+html,
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  height: 100% !important;
+  background: #000000;
+  color: white;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Homepage */
+.title-header {
+  display: flex;
+  justify-content: center;
+}
+
+.homepage-button {
+  font-size: 28px;
+  transition: transform 0.2s;
+}
+
+.homepage-button:hover {
+  transform: scale(1.1);
+}
+
+.homepage-image img {
+  -webkit-filter: drop-shadow(0px 0px 15px #ffffff);
+  filter: drop-shadow(0px 0px 15px #ffffff);
+}
+
+/* Game Stage */
+.top-bar {
+  background-color: #0c0c0c;
+}
+
+.gameStage p {
+  font-size: 40px;
+}
+
+#sessionCode {
+  font-size: 35px !important;
+  text-align: center;
+  color: #efefef;
+  padding: 20px;
+  border: 1px solid #efefef !important;
+  border-radius: 20px;
+  background-color: #000000;
+  font-family: Neucha, -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+#sessionCode:focus {
+  outline: none;
+  border: 2px solid #efefef !important;
+}
+
+#sessionCode::placeholder {
+  color: #efefef;
+  font-family: Neucha, -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.deal-button {
+  font-size: 50px;
+}
+
+@media only screen and (min-width: 768px) {
+  .hand {
+    z-index: 99;
+    position: fixed !important;
+    right: 0px;
+    bottom: 0px !important;
+  }
+}
+
+.card {
+  border: none;
+  width: 80%;
+  border-radius: 45px;
+  box-shadow: 0px 0px 15px -2px #cfcfcf;
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0px 0px 20px -2px #cfcfcf;
+  transform: scale(1.1);
+  filter: brightness(1.5);
+}
+
+.playedCard {
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px -2px #cfcfcf;
+}
+
+.playedCard:last-child {
+  transform: scale(1.5);
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px -2px #cfcfcf;
+}
+
+.game-finished p {
+  font-size: 120px !important;
+  text-align: center;
+  letter-spacing: 5px;
+  animation: fadein 4s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.level {
+  color: #cfcfcf;
+  border: 3px solid #cfcfcf;
+  opacity: 0.3;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.active {
+  opacity: 1;
+}
+
+.players-names p {
+  font-size: 35px !important;
+}
+
+.other-player-cards {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px -3px #cfcfcf;
+  transition: transform 0.3s;
 }
