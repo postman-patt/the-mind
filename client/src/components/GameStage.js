@@ -5,6 +5,7 @@ import Hand from './Hand'
 import PlayedCard from './PlayedCard'
 import LevelBar from './LevelBar'
 import { socket } from '../connection/socket'
+import { useLocation } from 'react-router-dom'
 
 //Bootstrap Imports
 import { Row, Col, Button, Container } from 'react-bootstrap'
@@ -21,6 +22,8 @@ export const GameStage = ({ match }) => {
   const [level, setLevel] = useState(1)
   const [levelComplete, setLevelComplete] = useState(false)
   const [playerStates, setPlayerStates] = useState([])
+
+  const location = useLocation()
 
   //Run check on gameOver state on any state change
   useEffect(() => {
@@ -67,7 +70,7 @@ export const GameStage = ({ match }) => {
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [location])
 
   //GAME LOGIC FUNCTIONS
 
@@ -106,17 +109,14 @@ export const GameStage = ({ match }) => {
           <Col md={4} className='d-flex justify-content-center py-3'>
             <Container>
               <Row className='players-title mb-3'>
-                <Col>
+                <Col className='d-flex justify-content-center'>
                   <h1>Players</h1>
                 </Col>
               </Row>
 
               {playerStates.map((player) => (
                 <Row className='m-3'>
-                  <Col
-                    md={3}
-                    className='players-names d-flex justify-content-center'
-                  >
+                  <Col className='players-names d-flex justify-content-center'>
                     <p>{player.name}</p>
                   </Col>
                   <Col md={9}>
@@ -134,52 +134,57 @@ export const GameStage = ({ match }) => {
             </Container>
           </Col>
           <Col md={8} className='py-3'>
-            {!gameOver ? (
-              !levelComplete ? (
-                <>
-                  <Row className='cards-played-title d-flex justify-content-md-center'>
-                    <Col className='d-flex justify-content-center'>
-                      <h1>Cards Played</h1>
+            <Container>
+              {!gameOver ? (
+                !levelComplete ? (
+                  <>
+                    <Row className='cards-played-title'>
+                      <Col className='d-flex justify-content-center'>
+                        <h1>Cards Played</h1>
+                      </Col>
+                    </Row>
+                    <Row className='justify-content-md-center py-3'>
+                      <Col
+                        md={4}
+                        className='d-flex justify-content-center py-5'
+                      >
+                        {cardsPlayed.map((card, index) => (
+                          <PlayedCard value={card} key={index} />
+                        ))}
+                      </Col>
+                    </Row>
+                  </>
+                ) : (
+                  <Row className='justify-content-md-center py-3 game-finished'>
+                    <Col md={4} className='d-flex justify-content-center'>
+                      <p>LEVEL COMPLETE</p>
                     </Col>
                   </Row>
-                  <Row className='justify-content-md-center py-3'>
-                    <Col md={4} className='d-flex justify-content-center py-5'>
-                      {cardsPlayed.map((card, index) => (
-                        <PlayedCard value={card} key={index} />
-                      ))}
-                    </Col>
-                  </Row>
-                </>
+                )
               ) : (
                 <Row className='justify-content-md-center py-3 game-finished'>
                   <Col md={4} className='d-flex justify-content-center'>
-                    <p>LEVEL COMPLETE</p>
+                    <p>GAME OVER</p>
                   </Col>
                 </Row>
-              )
-            ) : (
-              <Row className='justify-content-md-center py-3 game-finished'>
-                <Col md={4} className='d-flex justify-content-center'>
-                  <p>GAME OVER</p>
-                </Col>
-              </Row>
-            )}
-            {!gameStart && (
-              <Row className='justify-content-md-center'>
-                <Col md={6} className='d-flex justify-content-center p-5'>
-                  <Button
-                    className='deal-button px-5'
-                    variant='light'
-                    size='lg'
-                    onClick={() => {
-                      deal()
-                    }}
-                  >
-                    Deal
-                  </Button>
-                </Col>
-              </Row>
-            )}
+              )}
+              {!gameStart && (
+                <Row className='justify-content-md-center'>
+                  <Col md={6} className='d-flex justify-content-center p-5'>
+                    <Button
+                      className='deal-button px-5'
+                      variant='light'
+                      size='lg'
+                      onClick={() => {
+                        deal()
+                      }}
+                    >
+                      Deal
+                    </Button>
+                  </Col>
+                </Row>
+              )}
+            </Container>
           </Col>
         </Row>
         <Row className='hand'>

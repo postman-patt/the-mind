@@ -24,7 +24,7 @@ export const Home = ({ history }) => {
 
   const handleJoinSession = (room) => {
     if (name !== '') {
-      socket.emit('checkIfSessionExists', sessionID)
+      socket.emit('checkIfSessionExists', sessionID, name)
     } else {
       setMessage('Please insert name')
     }
@@ -41,16 +41,14 @@ export const Home = ({ history }) => {
   useEffect(() => {
     //Retrieve server reply for whether room exists
     socket.on('serverReply', (payload) => {
-      console.log(payload)
       if (payload) {
-        console.log(sessionID)
-        history.push(`/play/${name}/${sessionID}`)
+        history.push(`/play/${payload.name}/${payload.sessionID}`)
       } else {
         setMessage('Room does not exists...')
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionID])
+  }, [])
 
   return (
     <div className='homepage'>
@@ -73,6 +71,7 @@ export const Home = ({ history }) => {
               label='Name'
               type='text'
               onChange={(e) => setName(e.target.value)}
+              maxlength='6'
             />
           </Col>
         </Row>
@@ -84,6 +83,7 @@ export const Home = ({ history }) => {
               label='Session Code'
               type='text'
               onChange={(e) => setSessionID(e.target.value)}
+              maxlenght='4'
             />
           </Col>
         </Row>

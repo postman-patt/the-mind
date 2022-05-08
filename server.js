@@ -2,6 +2,7 @@ const express = require('express')
 const http = require('http')
 const app = express()
 const server = http.createServer(app)
+const path = require('path')
 const { userJoin, getSessionIDUsers, userLeave } = require('./utils/users.js')
 const {
   checkSession,
@@ -16,24 +17,33 @@ const {
 
 //Setting CORS access list
 const socketio = require('socket.io')
+const { get } = require('express/lib/response')
 const io = socketio(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:4000/',
   },
 })
 
-const PORT = 5000 || process.env.PORT
+const PORT = 4000 || process.env.PORT
+
+// Directs GET Request to /build directory
+app.use(express.static(path.join(__dirname, 'client', 'build')))
+
+// Routing is served via the index.html/index.js file
+app.get('*', (req, res) => {
+  res.sendFile('index.html', { root: path.join(__dirname, '/client/build') })
+})
 
 //Socket
 io.on('connection', (socket) => {
-  socket.on('checkIfSessionExists', (sessionID) => {
+  socket.on('checkIfSessionExists', (sessionID, name) => {
     const checkSessionID = checkSession(sessionID)
     if (checkSessionID) {
       //If game doesnt exists
       socket.emit('serverReply', false)
     } else {
       //If game does exists
-      socket.emit('serverReply', true)
+      socket.emit('serverReply', { sessionID: sessionID, name: name })
     }
   })
 
@@ -106,5 +116,5 @@ io.on('connection', (socket) => {
 })
 
 server.listen(PORT, () => {
-  console.log(`Sever is running on port: ${PORT}`)
+  console.log(`Server is running on port: ${PORT}`)
 })

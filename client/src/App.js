@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       <Router>
-        <div className='App-header'>
+        <div>
           <Route path='/' exact component={Home} />
           <Route path='/play/:name/:roomCode' exact component={GameStage} />
         </div>

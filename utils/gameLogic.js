@@ -145,12 +145,6 @@ const checkGameOver = (sessionID) => {
     .sort((a, b) => a - b)
     .slice(0, session.cardsPlayed.length)
   if (sortedAllCards.toString() !== session.cardsPlayed.toString()) {
-    //remove all cards from all players
-    // const players = session.playerStates.map((player) => ({
-    //   ...player,
-    //   cards: [],
-    // }))
-
     //Updated Session
     const updatedSession = {
       ...session,
@@ -261,7 +255,12 @@ const playerLeft = (sessionID, playerLeftId) => {
   const findIndex = sessions.findIndex(
     (session) => session.sessionID === sessionID
   )
-  sessions.splice(findIndex, 1, updatedSession)
+
+  if (updatedSession.playerStates.length == 0) {
+    sessions.splice(findIndex, 1)
+  } else {
+    sessions.splice(findIndex, 1, updatedSession)
+  }
 
   return updatedSession
 }

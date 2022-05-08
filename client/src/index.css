@@ -87,11 +87,13 @@ body {
 }
 
 .players-title h1{
-  font-size: 80px
+  font-size: 80px;
+  text-align: center;
 }
 
 .cards-played-title h1{
-  font-size: 80px
+  font-size: 80px;
+  text-align: center;
 }
 
 .playedCard {
