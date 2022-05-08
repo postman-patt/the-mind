@@ -2,7 +2,7 @@
 
 <p>The Mind Card Game using React, Express and Socketio</p>
 
-[DEMO](http://ec2-3-85-232-21.compute-1.amazonaws.com)
+[DEMO Hosted on AWS EC2](http://ec2-3-85-232-21.compute-1.amazonaws.com)
 
 <h2>Setup</h2>
 
