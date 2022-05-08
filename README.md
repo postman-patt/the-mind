@@ -2,7 +2,7 @@
 
 <p>The Mind Card Game using React, Express and Socketio</p>
 
-<a href="ec2-3-85-232-21.compute-1.amazonaws.com">Link to DEMO</a>
+[a link](ec2-3-85-232-21.compute-1.amazonaws.com)
 
 <h2>Setup</h2>
 
