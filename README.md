@@ -1,5 +1,3 @@
-# the-mind
-
 <h1> The Mind Card Game </h1>
 
 <p>The Mind Card Game using React, Express and Socketio</p>
@@ -8,7 +6,7 @@
 
 <p>Simply download and execute 'npm run dev' in the terminal after installing dependencies</p>
 
-<p>Please see <a href='https://www.ultraboardgames.com/the-mind/game-rules.php'>here</a> for the rules to the game.</p>
+<p>Please see <a href='https://www.ultraboardgames.com/the-mind/game-rules.php'>here</a> for the rules to the game</p>
 
 <h3>Create a game</h3>
 
@@ -32,17 +30,18 @@
 
 <p>To play a card simply click on it. The left side shows the players in the session, as well as the remaining cards in each persons hand. The right side will show the cards that have been played. The largest card will be the most recently played card.</p>
 
-<p>If the cards are not played in ascending order in accordance with all cards dealt, a "Game Over" message will show on screen. If this occurs then the level will not increment, and you will play the same level again until it is complete.</p>
-
-<img src='./client/imgs/game-over.PNG' alt='game-over'/>
-<img src='./client/imgs/level-complete.PNG' alt='level-complete'/>
-
 <img src='./client/imgs/session-screen2.PNG' alt='session-screen-2'/>
-
-<p>If all cards have been played correctly in ascending order, the "Level Complete" message will show and the level will be incremented by 1. The next round will continue and an additional card will be dealt in the following round.</p>
 
 <img src='./client/imgs/session-screen3.PNG' alt='session-screen-3'/>
 <p>Above image shows another players perspective</p>
+
+<p>If the cards are not played in ascending order in accordance with all cards dealt, a "Game Over" message will show on screen. If this occurs then the level will not increment, and you will play the same level again until it is complete.</p>
+
+<img src='./client/imgs/game-over.PNG' alt='game-over'/>
+
+<p>If all cards have been played correctly in ascending order, the "Level Complete" message will show and the level will be incremented by 1. The next round will continue and an additional card will be dealt in the following round.</p>
+
+<img src='./client/imgs/level-complete.PNG' alt='level-complete'/>
 
 <h2>Functions to add</h2>
 <ul>
