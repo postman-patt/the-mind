@@ -31,7 +31,6 @@ export const GameStage = ({ match }) => {
     })
 
     //Retrieve your own id
-
     socket.on('setPlayerId', (playerId) => {
       setPlayerId(playerId)
     })
@@ -104,16 +103,16 @@ export const GameStage = ({ match }) => {
           <LevelBar level={level} />
         </Row>
         <Row className='pt-5'>
-          <Col md={4} className='d-flex justify-content-center py-4'>
+          <Col md={4} className='d-flex justify-content-center py-3'>
             <Container>
-              <Row>
+              <Row className='players-title mb-3'>
                 <Col>
                   <h1>Players</h1>
                 </Col>
               </Row>
 
               {playerStates.map((player) => (
-                <Row>
+                <Row className='m-3'>
                   <Col
                     md={3}
                     className='players-names d-flex justify-content-center'
@@ -124,9 +123,9 @@ export const GameStage = ({ match }) => {
                     {player.cards.map((card) => (
                       <img
                         className='other-player-cards mx-1'
-                        src={`../../assets/cardset/0.png`}
+                        src={`../../assets/cardset/${gameOver ? card : 0}.png`}
                         alt='back-of-card'
-                        width='10%'
+                        width='15%'
                       />
                     ))}{' '}
                   </Col>
@@ -134,12 +133,12 @@ export const GameStage = ({ match }) => {
               ))}
             </Container>
           </Col>
-          <Col md={8}>
+          <Col md={8} className='py-3'>
             {!gameOver ? (
               !levelComplete ? (
                 <>
-                  <Row className='justify-content-md-center py-3'>
-                    <Col md={4} className='d-flex justify-content-center'>
+                  <Row className='cards-played-title d-flex justify-content-md-center'>
+                    <Col className='d-flex justify-content-center'>
                       <h1>Cards Played</h1>
                     </Col>
                   </Row>
@@ -166,7 +165,7 @@ export const GameStage = ({ match }) => {
               </Row>
             )}
             {!gameStart && (
-              <Row className='justify-content-md-center mt-5'>
+              <Row className='justify-content-md-center'>
                 <Col md={6} className='d-flex justify-content-center p-5'>
                   <Button
                     className='deal-button px-5'
@@ -189,7 +188,10 @@ export const GameStage = ({ match }) => {
               playerId === player.id && (
                 <Hand key={index}>
                   <Row xs={12} className='justify-content-md-center'>
-                    <Col md={6} className='d-flex justify-content-center'>
+                    <Col
+                      md={6}
+                      className='your-hand-title d-flex justify-content-center'
+                    >
                       <p>Your hand</p>
                     </Col>
                   </Row>

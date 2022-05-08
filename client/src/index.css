@@ -86,6 +86,14 @@ body {
   filter: brightness(1.5);
 }
 
+.players-title h1{
+  font-size: 80px
+}
+
+.cards-played-title h1{
+  font-size: 80px
+}
+
 .playedCard {
   border-radius: 10px;
   box-shadow: 0px 0px 15px -2px #cfcfcf;
@@ -132,12 +140,12 @@ body {
 }
 
 .players-names p {
-  font-size: 35px !important;
+  font-size: 30px !important;
 }
 
 .other-player-cards {
   border: none;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px -3px #cfcfcf;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px -2px #cfcfcf;
   transition: transform 0.3s;
 }

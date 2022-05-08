@@ -57,8 +57,12 @@ const deal = (sessionID) => {
     (session) => session.sessionID === sessionID
   )[0]
 
-  const players = session.playerStates
+  const players = session.playerStates.map((player) => ({
+    ...player,
+    cards: [],
+  }))
   const allCardsDealt = []
+
   for (let i = 0; i < session.level; i++) {
     for (let j = 0; j < players.length; j++) {
       const dealCard = () => {
@@ -142,17 +146,16 @@ const checkGameOver = (sessionID) => {
     .slice(0, session.cardsPlayed.length)
   if (sortedAllCards.toString() !== session.cardsPlayed.toString()) {
     //remove all cards from all players
-    const players = session.playerStates.map((player) => ({
-      ...player,
-      cards: [],
-    }))
+    // const players = session.playerStates.map((player) => ({
+    //   ...player,
+    //   cards: [],
+    // }))
 
     //Updated Session
     const updatedSession = {
       ...session,
       gameStart: false,
       gameOver: true,
-      playerStates: players,
     }
 
     //Mutate game state
