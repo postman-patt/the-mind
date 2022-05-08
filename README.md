@@ -2,6 +2,8 @@
 
 <p>The Mind Card Game using React, Express and Socketio</p>
 
+<a href="ec2-3-85-232-21.compute-1.amazonaws.com">Link to DEMO</a>
+
 <h2>Setup</h2>
 
 <p>Simply download and execute 'npm run dev' in the terminal after installing dependencies</p>
